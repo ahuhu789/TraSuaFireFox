@@ -1,0 +1,46 @@
+﻿###################
+# Visual Studio / IDE #
+###################
+*.vs/
+*.user
+*.userprefs
+*.suo
+*.sln.docstates
+*.vssscc
+*.vshost.*
+*.psmdcp
+vspreview/
+# Nâng cao (Có thể không cần):
+# .sonarlint/
+# .vscode/
+
+############################
+# Build & Output Directories #
+############################
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+*.dll
+*.exe
+*.pdb
+*.tmp
+*.log
+*.bak
+*.*proj.user
+*.resharper
+*.dotSettings
+packages/
+publish/
+temp/
+
+# Các thư mục/file của .NET Core / EF Core
+.nuget/
+.tooling/
+.DS_Store # (Mac OS)
+Thumbs.db # (Windows)
+
+# Entity Framework Core migrations (Bảo toàn)
+# Nếu bạn dùng Code First Migrations, thường nên BẢO TOÀN thư mục Migrations. 
+# Nếu bạn muốn bỏ qua nó, hãy thêm:
+# Migrations/

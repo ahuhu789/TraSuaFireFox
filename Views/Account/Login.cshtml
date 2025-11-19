@@ -1,0 +1,56 @@
+﻿@model TraSuaFireFox.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng Nhập";
+}
+
+<div class="flex items-center justify-center min-h-[calc(100vh-200px)]">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-4 border-yellow-600">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Chào mừng trở lại</h2>
+            <p class="text-gray-500 mt-2">Đăng nhập để quản lý hệ thống trà sữa</p>
+        </div>
+
+        <form asp-action="Login" method="post">
+            <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+            <div asp-validation-summary="ModelOnly" class="mb-4 text-red-500 text-sm text-center font-medium"></div>
+
+            <div class="mb-5">
+                <label asp-for="Email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-envelope text-gray-400"></i>
+                    </div>
+                    <input asp-for="Email" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition" placeholder="admin@trasua.vn" />
+                </div>
+                <span asp-validation-for="Email" class="text-red-500 text-xs mt-1"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="Password" class="block text-gray-700 text-sm font-bold mb-2">Mật khẩu</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-lock text-gray-400"></i>
+                    </div>
+                    <input asp-for="Password" type="password" class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition" placeholder="••••••" />
+                </div>
+                <span asp-validation-for="Password" class="text-red-500 text-xs mt-1"></span>
+            </div>
+
+            <button type="submit" class="w-full bg-yellow-600 text-white font-bold py-3 px-4 rounded hover:bg-yellow-700 transition duration-300 shadow-lg transform hover:-translate-y-0.5">
+                ĐĂNG NHẬP
+            </button>
+        </form>
+
+        <div class="mt-6 text-center">
+            <a href="#" class="text-sm text-gray-500 hover:text-yellow-600">Quên mật khẩu?</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

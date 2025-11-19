@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Quản Lý Trà Sữa</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#d97706', // Màu trà sữa (amber-600)
+                        secondary: '#b45309', // Màu trà đậm (amber-700)
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Hiệu ứng hover cho nav item */
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
+            background-color: white; transition: width 0.3s;
+        }
+        .nav-link:hover::after { width: 100%; }
+    </style>
+
+    @RenderSection("Styles", required: false)
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+
+    <header class="fixed top-0 left-0 right-0 bg-primary text-white z-50 shadow-md">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-16 sm:h-20">
+
+                <button id="mobile-menu-toggle" class="md:hidden text-white focus:outline-none p-2">
+                    <i class="fa-solid fa-bars text-2xl"></i>
+                </button>
+
+                <a href="@Url.Action("Index", "Home")" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 bg-white text-primary rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                        <i class="fa-solid fa-mug-hot text-xl"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wide hidden sm:block">MILK TEA SHOP</span>
+                </a>
+
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="@Url.Action("Index", "Home")" class="nav-link font-medium text-sm uppercase tracking-wider">Trang chủ</a>
+                    <a href="@Url.Action("Index", "Sanpham")" class="nav-link font-medium text-sm uppercase tracking-wider">Thực đơn</a>
+                    <a href="#" class="nav-link font-medium text-sm uppercase tracking-wider">Khuyến mãi</a>
+                    <a href="#" class="nav-link font-medium text-sm uppercase tracking-wider">Cửa hàng</a>
+
+                    @if (User.IsInRole("Quản lý") || User.IsInRole("Admin"))
+                    {
+                        <a href="/Admin/Home" class="bg-white text-primary px-4 py-2 rounded-full font-bold text-sm hover:bg-gray-100 transition shadow">
+                            <i class="fa-solid fa-user-shield mr-1"></i> Quản Trị
+                        </a>
+                    }
+                </nav>
+
+                <div class="flex items-center gap-4">
+                    <button class="hidden sm:block hover:text-gray-200"><i class="fa-solid fa-magnifying-glass"></i></button>
+
+                    <a href="#" class="relative hover:text-gray-200">
+                        <i class="fa-solid fa-cart-shopping text-xl"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                    </a>
+
+                    <div class="h-6 w-px bg-white/30 hidden sm:block"></div>
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="relative">
+                            <button id="user-menu-button"
+                                    class="flex items-center gap-2 text-sm font-medium hover:text-gray-100 focus:outline-none"
+                                    aria-expanded="false" aria-haspopup="true">
+                                <span>Hi, @User.Identity.Name</span>
+                                <i class="fa-solid fa-caret-down"></i>
+                            </button>
+                            <div id="user-menu-dropdown"
+                                 class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-xl py-2 hidden origin-top-right z-10">
+
+                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">Hồ sơ</a>
+                                <div class="border-t my-1"></div>
+
+                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <a href="javascript:document.getElementById('logoutForm').submit()"
+                                       class="block px-4 py-2 hover:bg-gray-100 text-red-600">
+                                        Đăng xuất
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Login", "Account")" class="text-sm font-bold hover:underline">Đăng nhập</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-secondary z-40 transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col pt-20 px-6">
+        <a href="@Url.Action("Index", "Home")" class="text-white text-lg font-medium py-3 border-b border-white/20">Trang chủ</a>
+        <a href="@Url.Action("Index", "Sanpham")" class="text-white text-lg font-medium py-3 border-b border-white/20">Thực đơn</a>
+        <a href="#" class="text-white text-lg font-medium py-3 border-b border-white/20">Khuyến mãi</a>
+        @if (User.IsInRole("Quản lý"))
+        {
+            <a href="/Admin/Home" class="text-yellow-300 text-lg font-bold py-3 border-b border-white/20">Trang Quản Trị</a>
+        }
+
+        <div class="mt-auto mb-8">
+            @if (!User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Login", "Account")" class="block w-full bg-white text-primary text-center py-3 rounded font-bold">Đăng Nhập / Đăng Ký</a>
+            }
+        </div>
+    </div>
+
+    <main role="main" class="flex-grow container mx-auto px-4 pt-24 pb-12">
+        @RenderBody()
+    </main>
+
+    <footer class="bg-gray-800 text-gray-300 py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">VỀ CHÚNG TÔI</h3>
+                    <p class="text-sm leading-relaxed">Hệ thống trà sữa chất lượng cao, mang lại trải nghiệm tuyệt vời cho giới trẻ. Hương vị đậm đà, topping đa dạng.</p>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">LIÊN KẾT</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-primary transition">Tuyển dụng</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Nhượng quyền</a></li>
+                        <li><a href="#" class="hover:text-primary transition">Điều khoản</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">LIÊN HỆ</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fa-solid fa-location-dot w-6"></i> 123 Đường Trà Sữa, TP.HCM</li>
+                        <li><i class="fa-solid fa-phone w-6"></i> 1900 1234</li>
+                        <li><i class="fa-solid fa-envelope w-6"></i> contact@trasua.vn</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-white font-bold text-lg mb-4">THEO DÕI</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-500">
+                &copy; 2025 Milk Tea Management System. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <button class="fixed bottom-8 right-8 bg-primary hover:bg-secondary text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-110 z-50">
+        <i class="fa-solid fa-comments text-2xl"></i>
+    </button>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // ... (Giữ nguyên hoặc đặt code Mobile Menu ở đây) ...
+
+            const menuButton = document.getElementById('user-menu-button');
+            const menuDropdown = document.getElementById('user-menu-dropdown');
+
+            if (menuButton && menuDropdown) {
+
+                // Xử lý khi click vào nút tên người dùng
+                menuButton.addEventListener('click', function () {
+                    const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+
+                    // Toggle trạng thái menu
+                    menuButton.setAttribute('aria-expanded', !isExpanded);
+                    menuDropdown.classList.toggle('hidden');
+                });
+
+                // Xử lý đóng menu khi click ra ngoài
+                document.addEventListener('click', function (event) {
+                    // Kiểm tra xem click có phải trên nút bấm hay trong dropdown không
+                    if (!menuButton.contains(event.target) && !menuDropdown.contains(event.target)) {
+                        // Nếu menu đang mở (không có class hidden) thì đóng lại
+                        if (!menuDropdown.classList.contains('hidden')) {
+                            menuDropdown.classList.add('hidden');
+                            menuButton.setAttribute('aria-expanded', 'false');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
