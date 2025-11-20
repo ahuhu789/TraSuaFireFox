@@ -1,0 +1,136 @@
+﻿@model TraSuaFireFox.Models.Sanpham
+
+@{
+    ViewData["Title"] = "Thêm Món Mới";
+}
+
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-amber-600 mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-circle-plus"></i> Thêm Món Trà Sữa Mới
+    </h2>
+
+    <form asp-action="Create" enctype="multipart/form-data" method="post">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            @Html.AntiForgeryToken()
+            <div class="space-y-4">
+                <div>
+                    <label asp-for="Masp" class="block text-sm font-medium text-gray-700">Mã Sản Phẩm</label>
+                    <input asp-for="Masp" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2" placeholder="VD: SP0100" required />
+                    <span asp-validation-for="Masp" class="text-red-500 text-xs"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Tensp" class="block text-sm font-medium text-gray-700">Tên Món</label>
+                    <input asp-for="Tensp" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2" placeholder="VD: Trà Sữa Trân Châu" />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label asp-for="Dongia" class="block text-sm font-medium text-gray-700">Đơn giá</label>
+                        <input asp-for="Dongia" type="number" step="any" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2" />
+                    </div>
+                    <div>
+                        <label asp-for="Soluongton" class="block text-sm font-medium text-gray-700">Số lượng tồn</label>
+                        <input asp-for="Soluongton" type="number" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label asp-for="Madm" class="block text-sm font-medium text-gray-700">Danh mục</label>
+
+                    <select asp-for="Madm" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2">
+                        <option value="">-- Chọn Danh Mục --</option>
+
+                        @if (ViewBag.DsDanhmuc != null)
+                        {
+                            foreach (var item in (IEnumerable<TraSuaFireFox.Models.Danhmuc>)ViewBag.DsDanhmuc)
+                            {
+                                <option value="@item.Madm">@item.Tendm</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="Mancc" class="block text-sm font-medium text-gray-700">Nhà cung cấp</label>
+
+                    <select asp-for="Mancc" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2">
+                        <option value="">-- Chọn Nhà Cung Cấp --</option>
+                        @if (ViewBag.DsNhacungcap != null)
+                        {
+                            foreach (var item in (IEnumerable<TraSuaFireFox.Models.Nhacungcap>)ViewBag.DsNhacungcap)
+                            {
+                                <option value="@item.Mancc">@item.Tenncc</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Hình ảnh sản phẩm</label>
+
+                    <label for="HinhAnhUpload" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 hover:border-amber-500 transition relative overflow-hidden group">
+
+                        <div id="upload-prompt" class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400 mb-3 group-hover:text-amber-500 transition group-hover:scale-110"></i>
+                            <p class="mb-2 text-sm text-gray-500 text-center">
+                                <span class="font-semibold text-amber-600">Bấm để chọn ảnh</span> hoặc kéo thả vào đây
+                            </p>
+                            <p class="text-xs text-gray-500">PNG, JPG, GIF (Tối đa 5MB)</p>
+                        </div>
+
+                        <img id="image-preview" class="absolute inset-0 w-full h-full object-contain hidden bg-white p-2" />
+
+                        <input id="HinhAnhUpload" name="HinhAnhUpload" type="file" class="hidden" accept="image/*" onchange="previewImage(this)" />
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <label asp-for="Mota" class="block text-sm font-medium text-gray-700">Mô tả chi tiết</label>
+            <textarea asp-for="Mota" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 border p-2"></textarea>
+        </div>
+
+        <input type="hidden" asp-for="Trangthai" value="Còn hàng" />
+
+        <div class="mt-8 flex justify-end gap-3">
+            <a asp-action="Index" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">Hủy bỏ</a>
+            <button type="submit" class="bg-amber-600 text-white px-6 py-2 rounded hover:bg-amber-700 transition shadow-lg font-bold">
+                <i class="fa-solid fa-save mr-1"></i> Lưu Sản Phẩm
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function previewImage(input) {
+            const preview = document.getElementById('image-preview');
+            const prompt = document.getElementById('upload-prompt');
+
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden'); // Hiện ảnh
+                    prompt.classList.add('hidden');     // Ẩn lời nhắc
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                // Nếu người dùng hủy chọn, reset lại
+                preview.src = '#';
+                preview.classList.add('hidden');
+                prompt.classList.remove('hidden');
+            }
+        }
+    </script>
+}

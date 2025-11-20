@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "Tổng quan hệ thống";
+}
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-green-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 p-3 rounded-full bg-green-100 text-green-600">
+                <i class="fa-solid fa-sack-dollar text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Tổng Doanh Thu</p>
+                <p class="text-2xl font-bold text-gray-800">@string.Format("{0:N0} đ", ViewBag.TongDoanhThu)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-blue-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 p-3 rounded-full bg-blue-100 text-blue-600">
+                <i class="fa-solid fa-cart-shopping text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Tổng Đơn Hàng</p>
+                <p class="text-2xl font-bold text-gray-800">@ViewBag.SoDonHang</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-amber-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 p-3 rounded-full bg-amber-100 text-amber-600">
+                <i class="fa-solid fa-mug-hot text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Món đang bán</p>
+                <p class="text-2xl font-bold text-gray-800">@ViewBag.SoSanPham</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-5 border-l-4 border-purple-500">
+        <div class="flex items-center">
+            <div class="flex-shrink-0 p-3 rounded-full bg-purple-100 text-purple-600">
+                <i class="fa-solid fa-user-tie text-2xl"></i>
+            </div>
+            <div class="ml-4">
+                <p class="text-sm font-medium text-gray-500">Nhân sự</p>
+                <p class="text-2xl font-bold text-gray-800">@ViewBag.SoNhanVien</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div class="p-6 bg-gradient-to-r from-amber-500 to-orange-600">
+        <h3 class="text-white text-xl font-bold">Xin chào, Admin TraSuaFireFox!</h3>
+        <p class="text-amber-100 mt-1">Chúc bạn một ngày làm việc hiệu quả.</p>
+    </div>
+    <div class="p-6">
+        <p class="text-gray-600 mb-4">Hệ thống đang hoạt động ổn định. Bạn có thể bắt đầu quản lý bằng menu bên trái.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="/Admin/Products/Create" class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-amber-500 hover:bg-amber-50 transition cursor-pointer group">
+                <i class="fa-solid fa-plus text-3xl text-gray-400 group-hover:text-amber-500 mb-2"></i>
+                <span class="text-gray-500 group-hover:text-amber-600 font-medium">Thêm Món Mới</span>
+            </a>
+            <a href="/Admin/Employees/Create" class="flex flex-col items-center justify-center p-6 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition cursor-pointer group">
+                <i class="fa-solid fa-user-plus text-3xl text-gray-400 group-hover:text-blue-500 mb-2"></i>
+                <span class="text-gray-500 group-hover:text-blue-600 font-medium">Thêm Nhân Viên</span>
+            </a>
+        </div>
+    </div>
+</div>
