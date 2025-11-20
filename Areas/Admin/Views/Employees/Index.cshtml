@@ -1,0 +1,84 @@
+﻿@model IEnumerable<TraSuaFireFox.Models.Nhanvien>
+
+@{
+    ViewData["Title"] = "Quản lý Nhân viên";
+}
+
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="p-6 flex justify-between items-center border-b border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800">Danh sách Nhân sự</h2>
+        <a href="@Url.Action("Create")" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition flex items-center gap-2 shadow">
+            <i class="fa-solid fa-user-plus"></i> Thêm Nhân viên
+        </a>
+    </div>
+
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-blue-50">
+                <tr>
+                    <th class="px-6 py-3">Mã NV</th>
+                    <th class="px-6 py-3">Họ tên</th>
+                    <th class="px-6 py-3">Chức vụ</th>
+                    <th class="px-6 py-3">Liên hệ</th>
+                    <th class="px-6 py-3">Lương CB</th>
+                    <th class="px-6 py-3">Trạng thái</th>
+                    <th class="px-6 py-3 text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="bg-white border-b hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 font-medium text-gray-900">@item.Manv</td>
+                        <td class="px-6 py-4">
+                            <div class="font-medium text-gray-800">@item.Hoten</div>
+                            <div class="text-xs text-gray-500">NV từ: @item.Ngayvaolam</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            @if (item.Chucvu == "Quản lý")
+                            {
+                                <span class="bg-purple-100 text-purple-800 text-xs font-medium px-2.5 py-0.5 rounded border border-purple-400">@item.Chucvu</span>
+                            }
+                            else
+                            {
+                                <span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded border border-gray-400">@item.Chucvu</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4">
+                            <div><i class="fa-solid fa-phone text-xs mr-1"></i> @item.Sdt</div>
+                            <div class="text-xs text-blue-600">@item.Email</div>
+                        </td>
+                        <td class="px-6 py-4 font-bold text-gray-700">
+                            @string.Format("{0:N0}", item.Luongcoban)
+                        </td>
+                        <td class="px-6 py-4">
+                            @if (item.Trangthai == "Đang làm")
+                            {
+                                <span class="text-green-600 font-medium"><i class="fa-solid fa-circle-check mr-1"></i> @item.Trangthai</span>
+                            }
+                            else
+                            {
+                                <span class="text-red-600 font-medium"><i class="fa-solid fa-circle-minus mr-1"></i> @item.Trangthai</span>
+                            }
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <div class="flex justify-center gap-2">
+                                <a href="@Url.Action("Edit", "Employees", new { id = item.Manv })" class="text-blue-600 hover:text-blue-900" title="Sửa">
+                                    <i class="fa-solid fa-pen-to-square text-lg"></i>
+                                </a>
+
+                                <form action="/Admin/Employees/DeleteConfirmed" method="post" onsubmit="return confirm('Xóa nhân viên @item.Hoten?');" class="inline-block">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.Manv" />
+                                    <button type="submit" class="text-red-600 hover:text-red-900" title="Xóa">
+                                        <i class="fa-solid fa-trash-can text-lg"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

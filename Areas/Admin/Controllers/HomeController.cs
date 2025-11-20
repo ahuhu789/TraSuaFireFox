@@ -6,7 +6,7 @@ using System.Linq;
 namespace TraSuaFireFox.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Quản lý")] // Chỉ quản lý mới được vào
+    [Authorize(Roles = "Quản lý")]
     public class HomeController : Controller
     {
         private readonly QlTrasuaMainContext _context;
@@ -23,7 +23,7 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
             // 1. Tổng doanh thu (từ bảng THANHTOAN)
             var tongDoanhThu = _context.Thanhtoans.Sum(t => t.Tongtien);
 
-            // 2. Số đơn hàng hôm nay (Giả sử lấy tất cả để test nếu dữ liệu ít)
+            // 2. Số đơn hàng
             var soDonHang = _context.Donhangs.Count();
 
             // 3. Số sản phẩm đang bán

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TraSuaFireFox.Models;
 
 public partial class Khachhang
 {
+    [Key]
     public string Makh { get; set; } = null!;
 
     public string? Hoten { get; set; }

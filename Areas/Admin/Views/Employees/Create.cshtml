@@ -1,0 +1,110 @@
+﻿@model TraSuaFireFox.Models.Nhanvien
+@{
+    ViewData["Title"] = "Thêm Nhân Viên Mới";
+}
+
+<div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-blue-600 mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-user-plus"></i> Thêm Nhân Viên
+    </h2>
+
+    <form action="@Url.Action("Create", "Employees", new { area = "Admin" })" method="post">
+        @Html.AntiForgeryToken()
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="mb-4 text-red-500 text-sm p-2 bg-red-50 border border-red-200 rounded text-center">
+                Vui lòng kiểm tra lại thông tin nhập liệu.
+            </div>
+        }
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-4">
+                <div>
+                    <label for="Manv" class="block text-sm font-medium text-gray-700">Mã Nhân Viên <span class="text-red-500">*</span></label>
+                    <input type="text" id="Manv" name="Manv" value="@Model?.Manv" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="VD: NV0001" required />
+                    @if (ViewData.ModelState["Manv"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Manv"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="Hoten" class="block text-sm font-medium text-gray-700">Họ và Tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="Hoten" name="Hoten" value="@Model?.Hoten" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" required />
+                    @if (ViewData.ModelState["Hoten"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Hoten"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="Email" class="block text-sm font-medium text-gray-700">Email (Tài khoản) <span class="text-red-500">*</span></label>
+                    <input type="email" id="Email" name="Email" value="@Model?.Email" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" required />
+                    @if (ViewData.ModelState["Email"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Email"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="Matkhau" class="block text-sm font-medium text-gray-700">Mật khẩu <span class="text-red-500">*</span></label>
+                    <input type="password" id="Matkhau" name="Matkhau" value="@Model?.Matkhau" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" required />
+                    @if (ViewData.ModelState["Matkhau"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Matkhau"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="Sdt" class="block text-sm font-medium text-gray-700">Số điện thoại</label>
+                    <input type="text" id="Sdt" name="Sdt" value="@Model?.Sdt" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" />
+                    @if (ViewData.ModelState["Sdt"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Sdt"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="Chucvu" class="block text-sm font-medium text-gray-700">Chức vụ</label>
+                    <select id="Chucvu" name="Chucvu" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500">
+                        <!option value="Nhân viên" @(Model?.Chucvu == "Nhân viên" ? "selected" : "")>Nhân viên</!option>
+                        <!option value="Thu ngân" @(Model?.Chucvu == "Thu ngân" ? "selected" : "")>Thu ngân</!option>
+                        <!option value="Pha chế" @(Model?.Chucvu == "Pha chế" ? "selected" : "")>Pha chế</!option>
+                        <!option value="Quản lý" @(Model?.Chucvu == "Quản lý" ? "selected" : "")>Quản lý</!option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="Luongcoban" class="block text-sm font-medium text-gray-700">Lương cơ bản</label>
+                    <input type="number" id="Luongcoban" name="Luongcoban" value="@Model?.Luongcoban" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" />
+                    @if (ViewData.ModelState["Luongcoban"]?.Errors.Count > 0)
+                    {
+                        <span class="text-red-500 text-xs">@ViewData.ModelState["Luongcoban"]?.Errors[0].ErrorMessage</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="Ngayvaolam" class="block text-sm font-medium text-gray-700">Ngày vào làm</label>
+                    <input type="date" id="Ngayvaolam" name="Ngayvaolam" value="@(Model?.Ngayvaolam?.ToString("yyyy-MM-dd") ?? DateTime.Now.ToString("yyyy-MM-dd"))" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" />
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <label for="Diachi" class="block text-sm font-medium text-gray-700">Địa chỉ</label>
+            <input type="text" id="Diachi" name="Diachi" value="@Model?.Diachi" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500" />
+        </div>
+
+        <input type="hidden" name="Trangthai" value="Đang làm" />
+
+        <div class="mt-8 flex justify-end gap-3">
+            <a href="@Url.Action("Index")" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">Hủy bỏ</a>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition shadow-lg font-bold">
+                <i class="fa-solid fa-user-check mr-1"></i> Lưu Nhân Viên
+            </button>
+        </div>
+    </form>
+</div>

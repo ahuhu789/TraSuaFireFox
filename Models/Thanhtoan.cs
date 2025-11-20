@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TraSuaFireFox.Models;
 
 public partial class Thanhtoan
 {
+    [Key]
     public string Magd { get; set; } = null!;
 
     public string Madh { get; set; } = null!;

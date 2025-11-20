@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TraSuaFireFox.Models;
 
 public partial class Donhang
 {
+    [Key]
+
     public string Madh { get; set; } = null!;
 
     public string Makh { get; set; } = null!;

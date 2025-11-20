@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TraSuaFireFox.Models;
 
 public partial class Nhacungcap
 {
+    [Key]
     public int Mancc { get; set; }
 
     public string? Tenncc { get; set; }

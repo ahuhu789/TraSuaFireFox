@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace TraSuaFireFox.Models;
 
 public partial class Ctdonhang
 {
+    [Key]
     public string Madh { get; set; } = null!;
 
     public string Masp { get; set; } = null!;

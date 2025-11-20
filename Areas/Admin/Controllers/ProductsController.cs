@@ -42,6 +42,11 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Sanpham sanpham, IFormFile? HinhAnhUpload)
         {
+
+            if (_context.Sanphams.Any(s => s.Masp == sanpham.Masp))
+            {
+                ModelState.AddModelError("Masp", "Mã sản phẩm này đã tồn tại!");
+            }
             if (ModelState.IsValid)
             {
                 // Xử lý upload ảnh
@@ -81,35 +86,49 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
             return View(sanpham);
         }
 
-        // 4. CHỈNH SỬA (GET)
+        // ---------------------------------------------------------
+        // 4. CHỈNH SỬA (GET) - Hiển thị form
+        // ---------------------------------------------------------
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null) return NotFound();
+
             var sanpham = await _context.Sanphams.FindAsync(id);
             if (sanpham == null) return NotFound();
 
-            // Lấy danh sách thô
+            // Lấy danh sách cho Dropdown
             ViewBag.DsDanhmuc = _context.Danhmucs.ToList();
             ViewBag.DsNhacungcap = _context.Nhacungcaps.ToList();
 
             return View(sanpham);
         }
 
-        // 5. CHỈNH SỬA (POST)
+        // ---------------------------------------------------------
+        // 5. CHỈNH SỬA (POST) - Xử lý cập nhật
+        // ---------------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, Sanpham sanpham, IFormFile? HinhAnhUpload)
         {
             if (id != sanpham.Masp) return NotFound();
 
+            // Bỏ qua validate các bảng liên kết (giống phần Create)
+            ModelState.Remove("MadmNavigation");
+            ModelState.Remove("ManccNavigation");
+            ModelState.Remove("Ctdonhangs");
+            ModelState.Remove("Chitietsanpham");
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Logic xử lý ảnh khi update
+                    // Lấy thông tin sản phẩm cũ từ DB (để lấy tên ảnh cũ)
+                    // AsNoTracking() quan trọng để tránh lỗi conflict khi Update
+                    var sanphamCu = await _context.Sanphams.AsNoTracking().FirstOrDefaultAsync(x => x.Masp == id);
+
                     if (HinhAnhUpload != null)
                     {
-                        // 1. Upload ảnh mới (như phần Create)
+                        // A. UPLOAD ẢNH MỚI
                         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(HinhAnhUpload.FileName);
                         string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images/products");
 
@@ -117,19 +136,28 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
                         {
                             await HinhAnhUpload.CopyToAsync(fileStream);
                         }
-
-                        // 2. Cập nhật tên file mới
                         sanpham.Hinhanh = fileName;
+
+                        // B. XÓA ẢNH CŨ (Nếu có và không phải default)
+                        if (sanphamCu != null && !string.IsNullOrEmpty(sanphamCu.Hinhanh) && sanphamCu.Hinhanh != "default.jpg")
+                        {
+                            string oldPath = Path.Combine(_webHostEnvironment.WebRootPath, "images/products", sanphamCu.Hinhanh);
+                            if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                        }
                     }
                     else
                     {
-                        // Nếu không chọn ảnh mới, giữ nguyên ảnh cũ (Cần cẩn thận: Form sẽ trả về null cho Hinhanh nếu không input hidden)
-                        // Cách an toàn nhất là lấy từ DB ra gán lại, hoặc dùng AsNoTracking() ở GET. 
-                        // Để đơn giản ở đây tôi giả sử bạn dùng input hidden ở View.
+                        // Nếu không upload ảnh mới, GIỮ NGUYÊN ẢNH CŨ
+                        sanpham.Hinhanh = sanphamCu?.Hinhanh;
                     }
+
+                    // Giữ nguyên ngày tạo cũ (hoặc logic khác tùy bạn)
+                    sanpham.Ngaytao = sanphamCu?.Ngaytao;
 
                     _context.Update(sanpham);
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = $"Cập nhật thành công: {sanpham.Tensp}";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -138,12 +166,15 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewBag.DsDanhmuc = _context.Danhmucs.ToList();
             ViewBag.DsNhacungcap = _context.Nhacungcaps.ToList();
             return View(sanpham);
         }
 
-        // 6. XÓA 
+        // ---------------------------------------------------------
+        // 6. XÓA SẢN PHẨM (POST)
+        // ---------------------------------------------------------
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -151,8 +182,16 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
             var sanpham = await _context.Sanphams.FindAsync(id);
             if (sanpham != null)
             {
+                // Xóa file ảnh khỏi server
+                if (!string.IsNullOrEmpty(sanpham.Hinhanh) && sanpham.Hinhanh != "default.jpg")
+                {
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, "images/products", sanpham.Hinhanh);
+                    if (System.IO.File.Exists(imagePath)) System.IO.File.Delete(imagePath);
+                }
+
                 _context.Sanphams.Remove(sanpham);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đã xóa sản phẩm thành công!";
             }
             return RedirectToAction(nameof(Index));
         }

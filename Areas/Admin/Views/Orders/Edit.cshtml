@@ -1,0 +1,49 @@
+﻿@model TraSuaFireFox.Models.Donhang
+@{
+    ViewData["Title"] = "Cập nhật Đơn hàng";
+}
+
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow-lg p-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <i class="fa-solid fa-file-pen"></i> Cập nhật Trạng Thái Đơn Hàng
+    </h2>
+
+    <form action="@Url.Action("Edit", "Orders", new { area = "Admin", id = Model.Madh })" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="Madh" value="@Model.Madh" />
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Mã Đơn Hàng</label>
+                <input type="text" value="@Model.Madh" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 border p-2" readonly />
+            </div>
+
+            <div>
+                <label for="Trangthaidh" class="block text-sm font-medium text-gray-700">Trạng thái</label>
+                <select id="Trangthaidh" name="Trangthaidh" class="mt-1 block w-full rounded-md border-gray-300 border p-2 focus:ring-blue-500 focus:border-blue-500">
+                    <!option value="Chờ xử lý" @(Model.Trangthaidh == "Chờ xử lý" ? "selected" : "")>Chờ xử lý</!option>
+                    <!option value="Đang giao" @(Model.Trangthaidh == "Đang giao" ? "selected" : "")>Đang giao</!option>
+                    <!option value="Đã giao" @(Model.Trangthaidh == "Đã giao" ? "selected" : "")>Đã giao</!option>
+                    <!option value="Đã hủy" @(Model.Trangthaidh == "Đã hủy" ? "selected" : "")>Đã hủy</!option>
+                </select>
+            </div>
+
+            <div>
+                <label for="Ngaygiaohangdukien" class="block text-sm font-medium text-gray-700">Ngày giao dự kiến</label>
+                <input type="date" id="Ngaygiaohangdukien" name="Ngaygiaohangdukien" value="@Model.Ngaygiaohangdukien?.ToString("yyyy-MM-dd")" class="mt-1 block w-full rounded-md border-gray-300 border p-2" />
+            </div>
+
+            <div>
+                <label for="Ghichu" class="block text-sm font-medium text-gray-700">Ghi chú nội bộ</label>
+                <textarea id="Ghichu" name="Ghichu" rows="3" class="mt-1 block w-full rounded-md border-gray-300 border p-2">@Model.Ghichu</textarea>
+            </div>
+        </div>
+
+        <div class="mt-8 flex justify-end gap-3">
+            <a href="@Url.Action("Index")" class="bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">Hủy bỏ</a>
+            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition shadow-lg font-bold">
+                <i class="fa-solid fa-floppy-disk mr-1"></i> Lưu thay đổi
+            </button>
+        </div>
+    </form>
+</div>
