@@ -237,3 +237,10 @@ INSERT INTO THANHTOAN VALUES
 ('TT0002', 'DH0002', N'Chuyển khoản', 40000, '2024-07-03', N'Hoàn tất', N'Đã thanh toán online'),
 ('TT0003', 'DH0003', N'Tiền mặt', 135000, '2024-07-04', N'Hoàn tất', N'Đã giao hàng');
 GO
+
+--Thêm các cột Mật khẩu, Mã xác thực (OTP) và Thời hạn OTP vào bảng KHACHHANG
+ALTER TABLE KHACHHANG ADD MATKHAU VARCHAR(100);
+ALTER TABLE KHACHHANG ADD MAXACTHUC VARCHAR(10); -- Lưu mã OTP 6 số
+ALTER TABLE KHACHHANG ADD HANHIEULUC DATETIME;   -- Thời gian hết hạn của OTP
+ALTER TABLE KHACHHANG ADD TRANGTHAIXACTHUC BIT DEFAULT 0; -- 0: Chưa xác thực, 1: Đã xác thực
+GO

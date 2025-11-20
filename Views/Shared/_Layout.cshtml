@@ -13,6 +13,15 @@
                     colors: {
                         primary: '#d97706', // Màu trà sữa (amber-600)
                         secondary: '#b45309', // Màu trà đậm (amber-700)
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.2s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
@@ -20,18 +29,31 @@
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Hiệu ứng hover cho nav item */
-        .nav-link { position: relative; }
-        .nav-link::after {
-            content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
-            background-color: white; transition: width 0.3s;
+        body {
+            font-family: 'Inter', sans-serif;
         }
-        .nav-link:hover::after { width: 100%; }
+        /* Hiệu ứng hover cho nav item */
+        .nav-link {
+            position: relative;
+        }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 2px;
+                bottom: -4px;
+                left: 0;
+                background-color: white;
+                transition: width 0.3s;
+            }
+
+            .nav-link:hover::after {
+                width: 100%;
+            }
     </style>
 
     @RenderSection("Styles", required: false)
@@ -50,12 +72,12 @@
                     <div class="w-10 h-10 bg-white text-primary rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                         <i class="fa-solid fa-mug-hot text-xl"></i>
                     </div>
-                    <span class="font-bold text-xl tracking-wide hidden sm:block">MILK TEA SHOP</span>
+                    <span class="font-bold text-xl tracking-wide hidden sm:block">FireFox MilkTea</span>
                 </a>
 
                 <nav class="hidden md:flex items-center space-x-8">
                     <a href="@Url.Action("Index", "Home")" class="nav-link font-medium text-sm uppercase tracking-wider">Trang chủ</a>
-                    <a href="@Url.Action("Index", "Sanpham")" class="nav-link font-medium text-sm uppercase tracking-wider">Thực đơn</a>
+                    <a href="@Url.Action("Index", "Menu")" class="nav-link font-medium text-sm uppercase tracking-wider">Thực đơn</a>
                     <a href="#" class="nav-link font-medium text-sm uppercase tracking-wider">Khuyến mãi</a>
                     <a href="#" class="nav-link font-medium text-sm uppercase tracking-wider">Cửa hàng</a>
 
@@ -70,10 +92,36 @@
                 <div class="flex items-center gap-4">
                     <button class="hidden sm:block hover:text-gray-200"><i class="fa-solid fa-magnifying-glass"></i></button>
 
-                    <a href="#" class="relative hover:text-gray-200">
-                        <i class="fa-solid fa-cart-shopping text-xl"></i>
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
-                    </a>
+                    <div class="relative group z-50">
+
+                        <a href="/Cart/Index" class="relative block hover:text-gray-200 py-4">
+                            <i class="fa-solid fa-cart-shopping text-xl"></i>
+                            <span id="cart-count-badge" class="absolute top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">0</span>
+                        </a>
+
+                        <div class="absolute right-0 top-full w-80 bg-white rounded-lg shadow-xl border border-gray-200 hidden group-hover:block animate-fade-in">
+
+                            <div class="absolute -top-2 right-2 w-4 h-4 bg-white transform rotate-45 border-l border-t border-gray-200"></div>
+
+                            <div class="p-4">
+                                <h3 class="text-gray-800 font-bold text-sm border-b pb-2 mb-2">Giỏ hàng của bạn</h3>
+
+                                <div id="mini-cart-items" class="max-h-60 overflow-y-auto space-y-3 text-gray-700">
+                                    <p class="text-sm text-gray-500 text-center py-4">Đang tải...</p>
+                                </div>
+
+                                <div class="border-t mt-3 pt-3">
+                                    <div class="flex justify-between items-center mb-3">
+                                        <span class="text-sm text-gray-600">Tổng cộng:</span>
+                                        <span id="mini-cart-total" class="text-lg font-bold text-red-600">0 đ</span>
+                                    </div>
+                                    <a href="/Cart/Index" class="block w-full bg-amber-600 text-white text-center py-2 rounded hover:bg-amber-700 transition text-sm font-bold">
+                                        Xem Giỏ Hàng
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="h-6 w-px bg-white/30 hidden sm:block"></div>
 
@@ -86,26 +134,35 @@
                                 <span>Hi, @User.Identity.Name</span>
                                 <i class="fa-solid fa-caret-down"></i>
                             </button>
-                            <div id="user-menu-dropdown"
-                                 class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-xl py-2 hidden origin-top-right z-10">
 
-                                <a href="#" class="block px-4 py-2 hover:bg-gray-100">Hồ sơ</a>
+                            <div id="user-menu-dropdown"
+                                 class="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded shadow-xl py-2 hidden origin-top-right z-10 animate-fade-in">
+
+                                @if (User.IsInRole("Customer"))
+                                {
+                                    <a href="/ClientAccount/Profile" class="block px-4 py-2 hover:bg-gray-100">Hồ sơ cá nhân</a>
+                                }
+                                else
+                                {
+                                    <a href="/Admin/Home" class="block px-4 py-2 hover:bg-gray-100">Trang quản trị</a>
+                                }
+
                                 <div class="border-t my-1"></div>
 
-                                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                                @using (Html.BeginForm("Logout", "ClientAccount", new { area = "" }, FormMethod.Post))
                                 {
                                     @Html.AntiForgeryToken()
-                                    <a href="javascript:document.getElementById('logoutForm').submit()"
-                                       class="block px-4 py-2 hover:bg-gray-100 text-red-600">
-                                        Đăng xuất
-                                    </a>
+                                    <button type="submit" class="text-sm font-medium text-red-600 hover:text-red-800">Đăng xuất</button>
                                 }
                             </div>
                         </div>
                     }
                     else
                     {
-                        <a href="@Url.Action("Login", "Account")" class="text-sm font-bold hover:underline">Đăng nhập</a>
+                        <div class="flex items-center gap-3">
+                            <a href="@Url.Action("Login", "ClientAccount")" class="text-sm font-bold hover:underline">Đăng nhập</a>
+                            <a href="@Url.Action("Register", "ClientAccount")" class="bg-white text-primary px-3 py-1.5 rounded-full text-xs font-bold hover:bg-gray-100 transition shadow">Đăng ký</a>
+                        </div>
                     }
                 </div>
             </div>
@@ -114,8 +171,9 @@
 
     <div id="mobile-menu" class="fixed inset-0 bg-secondary z-40 transform -translate-x-full transition-transform duration-300 md:hidden flex flex-col pt-20 px-6">
         <a href="@Url.Action("Index", "Home")" class="text-white text-lg font-medium py-3 border-b border-white/20">Trang chủ</a>
-        <a href="@Url.Action("Index", "Sanpham")" class="text-white text-lg font-medium py-3 border-b border-white/20">Thực đơn</a>
+        <a href="@Url.Action("Index", "Menu")" class="text-white text-lg font-medium py-3 border-b border-white/20">Thực đơn</a>
         <a href="#" class="text-white text-lg font-medium py-3 border-b border-white/20">Khuyến mãi</a>
+
         @if (User.IsInRole("Quản lý"))
         {
             <a href="/Admin/Home" class="text-yellow-300 text-lg font-bold py-3 border-b border-white/20">Trang Quản Trị</a>
@@ -124,7 +182,8 @@
         <div class="mt-auto mb-8">
             @if (!User.Identity.IsAuthenticated)
             {
-                <a href="@Url.Action("Login", "Account")" class="block w-full bg-white text-primary text-center py-3 rounded font-bold">Đăng Nhập / Đăng Ký</a>
+                <a href="@Url.Action("Login", "ClientAccount")" class="block w-full bg-white text-primary text-center py-3 rounded font-bold mb-3">Đăng Nhập</a>
+                <a href="@Url.Action("Register", "ClientAccount")" class="block w-full border border-white text-white text-center py-3 rounded font-bold hover:bg-white hover:text-primary">Đăng Ký</a>
             }
         </div>
     </div>
@@ -138,20 +197,18 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                     <h3 class="text-white font-bold text-lg mb-4">VỀ CHÚNG TÔI</h3>
-                    <p class="text-sm leading-relaxed">Hệ thống trà sữa chất lượng cao, mang lại trải nghiệm tuyệt vời cho giới trẻ. Hương vị đậm đà, topping đa dạng.</p>
+                    <p class="text-sm leading-relaxed">Hệ thống trà sữa chất lượng cao, mang lại trải nghiệm tuyệt vời cho giới trẻ.</p>
                 </div>
                 <div>
                     <h3 class="text-white font-bold text-lg mb-4">LIÊN KẾT</h3>
                     <ul class="space-y-2 text-sm">
                         <li><a href="#" class="hover:text-primary transition">Tuyển dụng</a></li>
-                        <li><a href="#" class="hover:text-primary transition">Nhượng quyền</a></li>
                         <li><a href="#" class="hover:text-primary transition">Điều khoản</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="text-white font-bold text-lg mb-4">LIÊN HỆ</h3>
                     <ul class="space-y-2 text-sm">
-                        <li><i class="fa-solid fa-location-dot w-6"></i> 123 Đường Trà Sữa, TP.HCM</li>
                         <li><i class="fa-solid fa-phone w-6"></i> 1900 1234</li>
                         <li><i class="fa-solid fa-envelope w-6"></i> contact@trasua.vn</li>
                     </ul>
@@ -161,53 +218,169 @@
                     <div class="flex space-x-4">
                         <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
                         <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-pink-600 hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-black hover:text-white transition"><i class="fa-brands fa-tiktok"></i></a>
                     </div>
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-500">
-                &copy; 2025 Milk Tea Management System. All rights reserved.
+                &copy; 2025 Milk Tea Management System.
             </div>
         </div>
     </footer>
 
-    <button class="fixed bottom-8 right-8 bg-primary hover:bg-secondary text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition transform hover:scale-110 z-50">
-        <i class="fa-solid fa-comments text-2xl"></i>
-    </button>
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // ... (Giữ nguyên hoặc đặt code Mobile Menu ở đây) ...
+            // === LOGIC MOBILE MENU ===
+            const menuBtn = document.getElementById('mobile-menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
 
-            const menuButton = document.getElementById('user-menu-button');
-            const menuDropdown = document.getElementById('user-menu-dropdown');
-
-            if (menuButton && menuDropdown) {
-
-                // Xử lý khi click vào nút tên người dùng
-                menuButton.addEventListener('click', function () {
-                    const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-
-                    // Toggle trạng thái menu
-                    menuButton.setAttribute('aria-expanded', !isExpanded);
-                    menuDropdown.classList.toggle('hidden');
+            if(menuBtn && mobileMenu) {
+                menuBtn.addEventListener('click', () => {
+                    if (mobileMenu.classList.contains('-translate-x-full')) {
+                        mobileMenu.classList.remove('-translate-x-full');
+                    } else {
+                        mobileMenu.classList.add('-translate-x-full');
+                    }
                 });
 
-                // Xử lý đóng menu khi click ra ngoài
+                // Đóng khi click ra ngoài
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenu.contains(e.target) && !menuBtn.contains(e.target) && !mobileMenu.classList.contains('-translate-x-full')) {
+                        mobileMenu.classList.add('-translate-x-full');
+                    }
+                });
+            }
+
+            // === LOGIC USER MENU DROPDOWN (CLICK) ===
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userMenuDropdown = document.getElementById('user-menu-dropdown');
+
+            if (userMenuButton && userMenuDropdown) {
+                userMenuButton.addEventListener('click', function (e) {
+                    e.stopPropagation(); // Ngăn chặn sự kiện click lan ra document
+                    const isExpanded = userMenuButton.getAttribute('aria-expanded') === 'true';
+                    userMenuButton.setAttribute('aria-expanded', !isExpanded);
+                    userMenuDropdown.classList.toggle('hidden');
+                });
+
+                // Đóng dropdown khi click ra ngoài
                 document.addEventListener('click', function (event) {
-                    // Kiểm tra xem click có phải trên nút bấm hay trong dropdown không
-                    if (!menuButton.contains(event.target) && !menuDropdown.contains(event.target)) {
-                        // Nếu menu đang mở (không có class hidden) thì đóng lại
-                        if (!menuDropdown.classList.contains('hidden')) {
-                            menuDropdown.classList.add('hidden');
-                            menuButton.setAttribute('aria-expanded', 'false');
+                    if (!userMenuButton.contains(event.target) && !userMenuDropdown.contains(event.target)) {
+                        if (!userMenuDropdown.classList.contains('hidden')) {
+                            userMenuDropdown.classList.add('hidden');
+                            userMenuButton.setAttribute('aria-expanded', 'false');
                         }
                     }
                 });
             }
         });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            // 1. Tải giỏ hàng khi mới vào trang (Chỉ chạy nếu không ở trang Giỏ hàng để tránh conflict)
+            // Hoặc chạy luôn cũng được vì logic updateMiniCart độc lập
+            updateMiniCart();
+
+            // 2. Xử lý sự kiện Click nút "Thêm" (AJAX) từ bất kỳ trang nào
+            $(document).on('click', '.ajax-add-to-cart', function (e) {
+                e.preventDefault();
+                var btn = $(this);
+                var productId = btn.data('id');
+
+                // Hiệu ứng loading
+                var originalHtml = btn.html();
+                btn.html('<i class="fa-solid fa-spinner fa-spin"></i>');
+                btn.prop('disabled', true);
+
+                $.post('/Cart/AddToCartAjax', { id: productId }, function (res) {
+                    if (res.success) {
+                        // Cập nhật lại Mini Cart
+                        updateMiniCart();
+
+                        // Hiệu ứng thành công
+                        btn.html('<i class="fa-solid fa-check"></i>');
+                        btn.removeClass('bg-amber-600 hover:bg-amber-700').addClass('bg-green-600');
+
+                        setTimeout(() => {
+                            btn.html(originalHtml);
+                            btn.removeClass('bg-green-600').addClass('bg-amber-600 hover:bg-amber-700');
+                            btn.prop('disabled', false);
+                        }, 1500);
+                    } else {
+                        alert(res.message);
+                        btn.html(originalHtml);
+                        btn.prop('disabled', false);
+                    }
+                }).fail(function() {
+                    alert("Lỗi kết nối server!");
+                    btn.html(originalHtml);
+                    btn.prop('disabled', false);
+                });
+            });
+
+            // 3. Xử lý nút Xóa trong Mini Cart (Sự kiện ủy quyền)
+            $(document).on('click', '.remove-mini-item', function (e) {
+                e.preventDefault();
+                var productId = $(this).data('id');
+
+                $.post('/Cart/RemoveCartAjax', { id: productId }, function (res) {
+                    if (res.success) {
+                        updateMiniCart();
+                        // Nếu đang ở trang Giỏ hàng chính thì reload để cập nhật lại bảng lớn
+                        if (window.location.pathname.toLowerCase().includes('/cart')) {
+                            location.reload();
+                        }
+                    }
+                });
+            });
+        });
+
+        // HÀM CẬP NHẬT GIAO DIỆN MINI CART
+        function updateMiniCart() {
+            $.get('/Cart/GetCartJson', function (data) {
+                // 1. Cập nhật số lượng trên Icon
+                $('#cart-count-badge').text(data.count);
+
+                // Ẩn badge nếu = 0
+                if(data.count > 0) {
+                    $('#cart-count-badge').removeClass('hidden');
+                } else {
+                    $('#cart-count-badge').addClass('hidden');
+                }
+
+                // 2. Cập nhật Tổng tiền
+                $('#mini-cart-total').text(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.total));
+
+                // 3. Vẽ lại danh sách món ăn
+                var html = '';
+                if (data.items.length === 0) {
+                    html = '<div class="text-center py-6"><i class="fa-solid fa-basket-shopping text-gray-300 text-4xl mb-2"></i><p class="text-sm text-gray-500">Giỏ hàng trống</p></div>';
+                } else {
+                    $.each(data.items, function (i, item) {
+                        var price = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.dongia);
+                        var imgUrl = '/images/products/' + item.hinhanh;
+
+                        html += `
+                            <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50 last:border-0 last:pb-0 last:mb-0">
+                                <img src="${imgUrl}" class="w-12 h-12 object-cover rounded border" alt="${item.tensp}" onerror="this.src='/images/products/default.jpg'">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-bold text-gray-800 truncate" title="${item.tensp}">${item.tensp}</h4>
+                                    <p class="text-xs text-gray-500 mt-0.5">
+                                        <span class="font-bold text-primary">${item.soluong}</span> x ${price}
+                                    </p>
+                                </div>
+                                <button class="remove-mini-item text-gray-400 hover:text-red-500 transition p-1" data-id="${item.masp}" title="Xóa">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                }
+                $('#mini-cart-items').html(html);
+            });
+        }
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)

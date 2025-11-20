@@ -14,7 +14,7 @@ public partial class Donhang
 
     public string Manv { get; set; } = null!;
 
-    public DateOnly? Ngaydathang { get; set; }
+    public DateTime? Ngaydathang { get; set; }
 
     public string? Trangthaidh { get; set; }
 
@@ -24,7 +24,7 @@ public partial class Donhang
 
     public string? Sdtgiaohang { get; set; }
 
-    public DateOnly? Ngaygiaohangdukien { get; set; }
+    public DateTime? Ngaygiaohangdukien { get; set; }
 
     public virtual ICollection<Ctdonhang> Ctdonhangs { get; set; } = new List<Ctdonhang>();
 

@@ -1,0 +1,60 @@
+﻿@model List<TraSuaFireFox.Models.Danhmuc>
+
+@{
+    ViewData["Title"] = "Thực đơn Trà Sữa FireFox";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">🍵 Thực Đơn Trà Sữa 🍵</h1>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center p-12 bg-gray-50 rounded-lg border border-gray-200">
+            <i class="fa-solid fa-mug-saucer text-6xl text-amber-500 mb-4"></i>
+            <p class="text-xl text-gray-600 font-semibold">Hiện chưa có sản phẩm nào được bán.</p>
+            <p class="text-gray-500">Vui lòng kiểm tra lại trạng thái sản phẩm trong khu vực quản trị.</p>
+        </div>
+    }
+    else
+    {
+        @foreach (var category in Model)
+        {
+            <div class="mb-12">
+                <h2 class="text-3xl font-bold text-amber-700 border-b-2 border-amber-300 pb-2 mb-6">
+                    @category.Tendm
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+                    @foreach (var product in category.Sanphams)
+                    {
+                        <div class="bg-white rounded-xl shadow-lg hover:shadow-xl transition duration-300 overflow-hidden border border-gray-100 flex flex-col">
+                            <div class="h-48 overflow-hidden">
+                                @{
+                                    string imgPath = string.IsNullOrEmpty(product.Hinhanh) ? "default.jpg" : product.Hinhanh;
+                                }
+                                <img src="~/images/products/@imgPath" alt="@product.Tensp" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            </div>
+
+                            <div class="p-4 flex-grow flex flex-col">
+                                <h3 class="text-lg font-bold text-gray-800 flex-grow mb-2">@product.Tensp</h3>
+                                <p class="text-sm text-gray-600 mb-3">@product.Mota</p>
+
+                                <div class="flex justify-between items-center mt-auto pt-2 border-t border-gray-100">
+                                    <span class="text-xl font-extrabold text-red-600">
+                                        @string.Format("{0:N0}", product.Dongia) đ
+                                    </span>
+
+                                    <button class="ajax-add-to-cart bg-amber-600 text-white px-4 py-2 rounded-full hover:bg-amber-700 transition shadow-md text-sm font-semibold flex items-center gap-2"
+                                            data-id="@product.Masp">
+                                        <i class="fa-solid fa-cart-plus"></i> Thêm
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>

@@ -56,7 +56,7 @@ namespace TraSuaFireFox.Areas.Admin.Controllers
         // 4. CẬP NHẬT TRẠNG THÁI (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, string Trangthaidh, DateOnly? Ngaygiaohangdukien, string Ghichu)
+        public async Task<IActionResult> Edit(string id, string Trangthaidh, DateTime? Ngaygiaohangdukien, string Ghichu)
         {
             // Lấy đơn hàng gốc từ CSDL
             var donhangDb = await _context.Donhangs.FindAsync(id);
